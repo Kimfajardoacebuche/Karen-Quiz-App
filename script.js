@@ -1,3 +1,20 @@
+// ==========================================
+// FIREBASE CLOUD CONFIGURATION
+// ==========================================
+// Replace these values with your own Firebase project configuration
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 // Quiz Questions Bank
 const questions = [
     {
@@ -76,23 +93,48 @@ nextBtn.addEventListener("click", handleNextQuestion);
 viewSystemBtn.addEventListener("click", showLeaderboard);
 backHomeBtn.addEventListener("click", resetToLogin);
 
-function getSubmissions() {
-    return JSON.parse(localStorage.getItem("quiz_submissions") || "[]");
+// Fetch submissions from Firebase Firestore (Cloud)
+async function getSubmissions() {
+    try {
+        const snapshot = await db.collection("quiz_submissions").get();
+        let submissions = [];
+        snapshot.forEach(doc => {
+            submissions.push(doc.data());
+        });
+        return submissions;
+    } catch (error) {
+        console.error("Error fetching submissions: ", error);
+        return [];
+    }
 }
 
-function saveSubmissions(submissions) {
-    localStorage.setItem("quiz_submissions", JSON.stringify(submissions));
+// Save submission to Firebase Firestore (Cloud)
+async function saveSubmissionToCloud(submissionData) {
+    try {
+        // Use user name as document ID to enforce no-retake rule globally across devices
+        const docId = submissionData.name.toLowerCase().trim();
+        await db.collection("quiz_submissions").doc(docId).set(submissionData);
+    } catch (error) {
+        console.error("Error saving submission: ", error);
+    }
 }
 
-function handleLogin() {
+async function handleLogin() {
     const name = usernameInput.value.trim();
     if (!name) {
         loginError.textContent = "Please enter your name to proceed.";
         return;
     }
 
-    const submissions = getSubmissions();
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Checking system...";
+
+    // Check globally if name already exists across all devices
+    const submissions = await getSubmissions();
     const existingUser = submissions.find(s => s.name.toLowerCase() === name.toLowerCase());
+
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Start Quiz";
 
     if (existingUser) {
         loginError.textContent = `Access Denied: '${name}' has already completed the quiz. No retakes allowed!`;
@@ -146,7 +188,7 @@ function handleNextQuestion() {
     }
 }
 
-function finishQuiz() {
+async function finishQuiz() {
     quizSection.classList.add("hidden");
     resultSection.classList.remove("hidden");
 
@@ -157,14 +199,16 @@ function finishQuiz() {
         }
     });
 
-    const submissions = getSubmissions();
-    submissions.push({
+    const newSubmission = {
         name: currentUser,
         score: score,
         total: questions.length,
-        answers: userAnswers
-    });
-    saveSubmissions(submissions);
+        answers: userAnswers,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    // Save to Cloud Database so both phone & laptop sync
+    await saveSubmissionToCloud(newSubmission);
 
     scoreSummary.innerHTML = `<h3 style="color: #ad1457; text-align: center; margin-bottom: 10px;">Great job, ${currentUser}! 💕<br>Score: <strong>${score} / ${questions.length}</strong></h3>`;
 
@@ -189,12 +233,14 @@ function finishQuiz() {
     reviewContainer.innerHTML = reviewHtml;
 }
 
-function showLeaderboard() {
+async function showLeaderboard() {
     loginSection.classList.add("hidden");
     resultSection.classList.add("hidden");
     leaderboardSection.classList.remove("hidden");
 
-    const submissions = getSubmissions();
+    leaderboardBody.innerHTML = `<tr><td colspan="3" style="text-align: center;">Loading live system data...</td></tr>`;
+
+    const submissions = await getSubmissions();
     submissions.sort((a, b) => b.score - a.score);
 
     leaderboardBody.innerHTML = "";
