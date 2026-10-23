@@ -1,73 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quiz</title>
-    
+
     <!-- Favicon -->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <div class="container">
-        <!-- 1. Login Section -->
-        <div id="login-section" class="card">
-            <h2>🌸 Long Quiz</h2>
-            <p>Enter your name to take the quiz. <br><strong>Note: One attempt only (No retakes)!</strong></p>
-            <input type="text" id="username-input" placeholder="Enter your full name..." autocomplete="off">
-            <button id="login-btn" class="btn">Start Quiz</button>
-            <div id="login-error" class="error-msg"></div>
-            <button id="view-system-from-login" class="btn secondary">View System & Leaderboard</button>
-        </div>
+      <!-- 1. Login Section -->
+      <div id="login-section" class="card">
+        <h2>🌸 Long Quiz</h2>
+        <p>
+          Enter your name to take the quiz. <br /><strong
+            >Note: One attempt only (No retakes)!</strong
+          >
+        </p>
+        <input
+          type="text"
+          id="username-input"
+          placeholder="Enter your full name..."
+          autocomplete="off"
+        />
+        <button id="login-btn" class="btn">Start Quiz</button>
+        <div id="login-error" class="error-msg"></div>
+        <button id="view-system-from-login" class="btn secondary">
+          View System & Leaderboard
+        </button>
+      </div>
 
-        <!-- 2. Quiz Section -->
-        <div id="quiz-section" class="card hidden">
-            <div class="quiz-header">
-                <span id="question-count">Question 1 of 5</span>
-                <span id="user-display">User: </span>
-            </div>
-            <h3 id="question-text">Question text goes here</h3>
-            <div id="options-container" class="options-container">
-                <!-- Options injected dynamically -->
-            </div>
-            <button id="next-btn" class="btn hidden">Next Question</button>
+      <!-- 2. Quiz Section -->
+      <div id="quiz-section" class="card hidden">
+        <div class="quiz-header">
+          <span id="question-count">Question 1 of 5</span>
+          <span id="user-display">User: </span>
         </div>
+        <h3 id="question-text">Question text goes here</h3>
+        <div id="options-container" class="options-container">
+          <!-- Options injected dynamically -->
+        </div>
+        <button id="next-btn" class="btn hidden">Next Question</button>
+      </div>
 
-        <!-- 3. Result & Review Section -->
-        <div id="result-section" class="card hidden">
-            <h2>🎉 Quiz Completed!</h2>
-            <div id="score-summary"></div>
-            <div id="review-container">
-                <!-- Review injected dynamically -->
-            </div>
-            <button id="view-system-btn" class="btn">View System & Leaderboard</button>
+      <!-- 3. Result & Review Section -->
+      <div id="result-section" class="card hidden">
+        <h2>🎉 Quiz Completed!</h2>
+        <div id="score-summary"></div>
+        <div id="review-container">
+          <!-- Review injected dynamically -->
         </div>
+        <button id="view-system-btn" class="btn">
+          View System & Leaderboard
+        </button>
+      </div>
 
-        <!-- 4. System / Leaderboard Section -->
-        <div id="leaderboard-section" class="card hidden">
-            <h2>🏆 Leaderboard</h2>
-            <p>All participants and their recorded scores:</p>
-            <table id="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Score</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboard-body">
-                    <!-- Rows injected dynamically -->
-                </tbody>
-            </table>
-            <button id="back-home-btn" class="btn secondary">Back to Login</button>
-        </div>
+      <!-- 4. System / Leaderboard Section -->
+      <div id="leaderboard-section" class="card hidden">
+        <h2>Quiz Result</h2>
+        <p>All participants and their recorded scores:</p>
+        <table id="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Name</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body">
+            <!-- Rows injected dynamically -->
+          </tbody>
+        </table>
+        <button id="back-home-btn" class="btn secondary">Back to Login</button>
+      </div>
     </div>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
